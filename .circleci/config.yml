@@ -4,8 +4,8 @@ orbs:
 jobs:
   build-and-test:
     working_directory: ~/app
-    # executor:
-    #   name: node/default
+    executor:
+      name: node/default
     steps:
       - checkout
       - attach_workspace:
