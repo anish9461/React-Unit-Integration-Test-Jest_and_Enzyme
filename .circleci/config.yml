@@ -12,7 +12,7 @@ jobs:
             - run: npm install
       - run: 
           name: Eject application 
-          command: npm run eject 
+          command: echo y | npm run eject 
       - run:
           name: Test application 
           command: npm test 
