@@ -9,6 +9,8 @@ jobs:
       - checkout
       - node/with-cache:
           steps:
+            - run: rm -rf node_modules
+            - run: rm -rf package-lock.json
             - run: npm install
       - run: 
           name: Eject application 
