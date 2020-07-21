@@ -7,11 +7,19 @@ jobs:
       name: node/default
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: rm -rf node_modules
-            - run: rm -rf package-lock.json
-            - run: npm install
+      - run:
+          name: Install node
+          command: |
+            npm uninstall react-scripts
+            npm install
+
+
+      # - node/with-cache:
+      #     steps:
+      #       - run: rm -rf node_modules
+      #       - run: rm -rf package-lock.json
+      #       - run: 
+      #       - run: npm install
       - run: 
           name: Eject application 
           command: echo y | npm run eject 
