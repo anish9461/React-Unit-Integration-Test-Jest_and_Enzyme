@@ -9,7 +9,10 @@ jobs:
       - checkout
       - run:
           name: Install node
-          command: npm install
+          command: |
+            npm uninstall react-scripts
+            npm install
+            npm install react-scripts
 
 
       # - node/with-cache:
