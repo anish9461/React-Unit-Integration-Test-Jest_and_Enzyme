@@ -13,7 +13,7 @@ jobs:
       - run: 
           name: Eject application 
           command: npm eject 
-      -run:
+      - run:
           name: Test application 
           command: npm test 
 workflows:
