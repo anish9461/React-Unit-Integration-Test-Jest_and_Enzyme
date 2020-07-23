@@ -14,6 +14,11 @@ jobs:
           name: Install node
           command: |
             npm install
+      
+      - run:
+          name: Coverage report
+          command: |
+            npm run coverage
 
 
       # - node/with-cache:
