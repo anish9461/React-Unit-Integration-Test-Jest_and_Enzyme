@@ -14,13 +14,17 @@ jobs:
           name: Install node
           command: |
             npm install
-      
+        - run:
+          name: Test application 
+          command: npm test
       - run:
           name: Coverage report
           command: |
             npm run coverage
 
-
+      - store_artifacts:
+          path: /coverage
+          destination: codeCoverage
       # - node/with-cache:
       #     steps:
       #       - run: rm -rf node_modules
@@ -30,9 +34,7 @@ jobs:
       # - run: 
       #     name: Eject application 
       #     command: echo y | npm run eject 
-      - run:
-          name: Test application 
-          command: npm test 
+       
 workflows:
     build-and-test:
       jobs:
