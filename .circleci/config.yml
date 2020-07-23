@@ -13,21 +13,33 @@ jobs:
       - run:
           name: Install node
           command: |
-            npm install
+            yarn install
       - run:
-          name: Test application 
-          command: npm test
+          name: "JavaScript Linter"
+          command: yarn lint -- --format junit -o reports/junit/js-lint-results.xml
       - run:
-          name: Coverage report
-          command: |
-            npm run coverage
+          name: "JavaScript Test Suite"
+          environment:
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+          command: yarn test -- --ci --testResultsProcessor="jest-junit"
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+      # - run:
+      #     name: Test application 
+      #     command: npm test
+      # - run:
+      #     name: Coverage report
+      #     command: |
+      #       npm run coverage
             
 
-      - run:
-          command: ls
-      - store_artifacts:
-          path: coverage
-          destination: codeCoverage
+      # - run:
+      #     command: ls
+      # - store_artifacts:
+      #     path: coverage
+      #     destination: codeCoverage
       # - node/with-cache:
       #     steps:
       #       - run: rm -rf node_modules
