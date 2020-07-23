@@ -14,7 +14,7 @@ jobs:
           name: Install node
           command: |
             npm install
-        - run:
+      - run:
           name: Test application 
           command: npm test
       - run:
