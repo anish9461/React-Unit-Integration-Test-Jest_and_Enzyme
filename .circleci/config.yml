@@ -45,17 +45,17 @@ jobs:
       # - run:
       #     name: Test application 
       #     command: npm test
-      # - run:
-      #     name: Coverage report
-      #     command: |
-      #       npm run coverage
+      - run:
+          name: Coverage report
+          command: |
+            yarn coverage
             
 
       # - run:
       #     command: ls
-      # - store_artifacts:
-      #     path: coverage
-      #     destination: codeCoverage
+      - store_artifacts:
+          path: coverage
+          destination: codeCoverage
       # - node/with-cache:
       #     steps:
       #       - run: rm -rf node_modules
