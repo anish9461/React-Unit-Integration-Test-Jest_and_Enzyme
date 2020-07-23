@@ -15,10 +15,10 @@ jobs:
           command: |
             yarn install
       
-      - run:
-          name: Coverage report
-          command: |
-            yarn coverage
+      # - run:
+      #     name: Coverage report
+      #     command: |
+      #       yarn coverage
       # - run:
       #     name: Install JUnit coverage reporter
       #     command: yarn add --dev jest-junit
