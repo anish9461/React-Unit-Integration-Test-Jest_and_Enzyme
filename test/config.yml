@@ -1,0 +1,171 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2.1
+
+orbs:
+  aws-cli: circleci/aws-cli@0.1.13
+  aws-ecr: circleci/aws-ecr@6.1.0
+  aws-s3: circleci/aws-s3@1.0.11
+
+jobs:
+  build: &default_job
+    docker:
+      - image: 249000773662.dkr.ecr.us-east-1.amazonaws.com/iotright-dev:latest
+        aws_auth:
+          aws_access_key_id: $AWS_ACCESS_KEY
+          aws_secret_access_key: $AWS_SECRET_KEY
+
+    working_directory: ~/app
+
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/app
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "iotright-portal/yarn.lock" }}
+            - v1-dependencies-
+
+      # - run:
+      #     name: Setup Environment
+      #     command: |
+      #       cd iotright-portal
+      #       touch .env
+      #       echo SKIP_PREFLIGHT_CHECK=true >> .env  
+      #       echo "REACT_APP_SYSTEM_KEY=${CB_SYSTEM_KEY}" >> .env         
+      #       echo "REACT_APP_SYSTEM_SECRET=${CB_SYSTEM_SECRET}" >> .env   
+      #       echo "REACT_APP_GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}" >> .env
+      #       echo "REACT_APP_AWS_IMAGE_UPLOAD_BUCKET_NAME=${TEST_AWS_BUCKET_NAME}" >> .env         
+      #       echo "REACT_APP_AWS_IMAGE_UPLOAD_BUCKET_REGION=${TEST_AWS_BUCKET_REGION}" >> .env   
+      #       echo "REACT_APP_AWS_COGNITO_IDENTITY_REGION=${AWS_COGNITO_IDENTITY_REGION}" >> .env
+      #       echo "REACT_APP_AWS_AUTH_COGNITO_IDENTITY_ID=${AWS_AUTH_COGNITO_IDENTITY_ID}" >> .env
+      #       echo "REACT_APP_AWS_COGNITO_USER_POOL_ID=${AWS_COGNITO_USER_POOL_ID}" >> .env
+      #       echo "REACT_APP_AWS_COGNITO_APP_CLIENT_ID=${AWS_COGNITO_APP_CLIENT_ID}" >> .env
+      #       echo "DENSITY_API_TOKEN=${DENSITY_API_TOKEN}" >> .env
+      #       echo "DENSITY_BUILDING_ID=${DENSITY_BUILDING_ID}" >> .env
+      #       echo "DENSITY_SPACE_ID=${DENSITY_SPACE_ID}" >> .env
+      #       echo "EDGE_MONITOR_URL=${EDGE_MONITOR_URL}" >> .env
+      #       echo "NVR_BASE_URL=${NVR_BASE_URL}" >> .env
+      #       echo "NVR_USER=${NVR_USER}" >> .env
+      #       echo "NVR_PWD=${NVR_PWD}" >> .env
+      #       cat .env
+
+      - run:
+          name: Yarn Install
+          command: |
+            cd iotright-portal
+            # rm -r node_modules 
+            # rm -r yarn.lock 
+            yarn install
+
+      # - run:
+      #     name: Coverage report
+      #     command: |
+      #       cd iotright-portal
+      #       CI=false yarn coverage
+
+      # run tests!
+      # - run:
+      #     name: Run test
+      #     command: |
+      #       cd iotright-portal
+      #       CI=false yarn test
+
+
+  
+
+      - run:
+          name: Run tests with JUnit as reporter
+          command: yarn jest
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit
+          destination: codeTests
+      - store_artifacts:
+          name: Code coverage Artifact
+          path: iotright-portal/coverage
+          destination: codeCoverage      
+      
+          # - run:
+      #     name: Yarn Build
+      #     command: |
+      #       cd iotright-portal 
+      #       CI=false yarn compile-sass
+      #       CI=false yarn minify-sass
+      #       CI=false yarn map-sass
+      #       CI=false yarn webpack
+      #       # CI=false yarn electron-build
+
+      # - aws-s3/sync:
+      #     from: iotright-portal/build
+      #     to: $PORTAL_S3_BUCKET
+      #     aws-access-key-id: AWS_ACCESS_KEY
+      #     aws-secret-access-key: AWS_SECRET_KEY
+      #     overwrite: true
+      #     aws-region: AWS_DEFAULT_REGION
+
+      # - run: aws cloudfront create-invalidation --distribution-id "${PORTAL_CLOUDFRONT_ID}" --paths "/*"
+
+      # - run:
+      #     name: Chat Notification Fail
+      #     when: on_fail
+      #     command: >
+      #       curl --header "Content-Type: application/json"
+      #       --request POST
+      #       --data "{\"cards\":[{\"header\":{\"title\":\"Oops. Build ${CIRCLE_BUILD_NUM} failed, and deployment did not update.\",\"subtitle\":\"${CIRCLE_PROJECT_REPONAME}\",\"imageUrl\":\"https://png.pngtree.com/svg/20170406/icon_failed__1325447.png\",\"imageStyle\":\"IMAGE\"},\"sections\":[{\"widgets\":[{\"keyValue\":{\"topLabel\":\"${CIRCLE_TAG}\",\"content\":\"${CIRCLE_SHA1}\"}}]},{\"widgets\":[{\"buttons\":[{\"textButton\":{\"text\":\"DETAILS\",\"onClick\":{\"openLink\":{\"url\":\"${CIRCLE_BUILD_URL}\"}}}}]}]}]}]}"
+      #       $CHAT_WEBHOOK_URL
+
+      # - run:
+      #     name: Chat Notification Success
+      #     when: on_success
+      #     command: >
+      #       curl --header "Content-Type: application/json"
+      #       --request POST
+      #       --data "{\"cards\":[{\"header\":{\"title\":\"Build ${CIRCLE_BUILD_NUM} passed and deployed.\",\"subtitle\":\"${CIRCLE_PROJECT_REPONAME}\",\"imageUrl\":\"https://png.pngtree.com/svg/20170510/success_404253.png\",\"imageStyle\":\"IMAGE\"},\"sections\":[{\"widgets\":[{\"keyValue\":{\"topLabel\":\"${CIRCLE_TAG}\",\"content\":\"${CIRCLE_SHA1}\"}}]},{\"widgets\":[{\"buttons\":[{\"textButton\":{\"text\":\"DETAILS\",\"onClick\":{\"openLink\":{\"url\":\"${CIRCLE_BUILD_URL}\"}}}}]}]}]}]}"
+      #       $CHAT_WEBHOOK_URL
+
+      - save_cache:
+          paths:
+            - iotright-portal/node_modules
+          key: v1-dependencies-{{ checksum "iotright-portal/yarn.lock" }}
+
+  build-imine: *default_job
+  build-netvox: *default_job
+  build-allencorp: *default_job
+  build-anish: *default_job
+
+workflows:
+  version: 2
+
+  all:
+    jobs:
+      - build-anish:
+          context: IoTRightDemo
+          filters:
+            branches:
+              only:
+                - IRS-676-Jest-Enzyme-CircleCI
+      - build-imine:
+          context: IoTRightDemo
+          filters:
+            branches:
+              only:
+                - production
+      - build-netvox:
+          context: IoTRightDemo-MTCNetvox
+          filters:
+            branches:
+              only:
+                - production-mtcnv
+      - build-allencorp:
+          context: IoTRightDemo-AllenCorp
+          filters:
+            branches:
+              only:
+                - production-allencorp
