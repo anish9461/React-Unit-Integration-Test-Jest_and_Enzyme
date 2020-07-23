@@ -52,7 +52,7 @@ test('rneders counter display', () => {
 
 test('counter starts at 0', () => {
   const wrapper = setup();
-  const initialCounterState = wrapper.state('counter');
+  const initialCounterState = wrapper.state('cunter');
   expect(initialCounterState).toBe(0)
 })
 
