@@ -21,9 +21,12 @@ jobs:
           name: Coverage report
           command: |
             npm run coverage
+            
 
+      - run:
+          command: ls
       - store_artifacts:
-          path: /coverage
+          path: /app/coverage
           destination: codeCoverage
       # - node/with-cache:
       #     steps:
