@@ -15,9 +15,9 @@ jobs:
           command: |
             yarn install
       
-      - run:
-          name: Install JUnit coverage reporter
-          command: yarn add --dev jest-junit
+      # - run:
+      #     name: Install JUnit coverage reporter
+      #     command: yarn add --dev jest-junit
       - run:
           name: Run tests with JUnit as reporter
           command: yarn jest

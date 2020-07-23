@@ -34,7 +34,7 @@ const findByTestAttr = (wrapper,val) => {
 
 test('renders without error', () => {
 const wrapper = shallow(<App />);
-const appComponent = findByTestAttr(wrapper,'componen-app');
+const appComponent = findByTestAttr(wrapper,'component-app');
 expect(appComponent.length).toBe(1);
 });
 
