@@ -25,17 +25,20 @@ jobs:
       # yarn lint junit -o reports/junit/js-lint-results.xml
       
       - run:
+        name: "JavaScript Linter"
+        command: |
+          mkdir -p lint-reports
+          yarn eslint ./src/ --format junit --output-file lint-reports/eslint.xml
+          ls
+          ls lint-reports
+
+      - run:
           name: Run tests with JUnit as reporter
           command: yarn jest
           environment:
             JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
-      - run:
-          name: "JavaScript Linter"
-          command: |
-            mkdir -p ~/lint-reports
-            yarn eslint ./src/ --format junit --output-file ~/reports/eslint.xml
-            ls
+      
       - store_test_results:
           path: ./reports
       - store_artifacts:
