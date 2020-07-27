@@ -22,10 +22,12 @@ jobs:
       # - run:
       #     name: Install JUnit coverage reporter
       #     command: yarn add --dev jest-junit
+      # yarn lint junit -o reports/junit/js-lint-results.xml
       - run:
           name: "JavaScript Linter"
           command: |
-            yarn lint junit -o reports/junit/js-lint-results.xml
+            mkdir -p ~/reports
+            eslint ./src/ --format junit --output-file ~/reports/eslint.xml
       - run:
           name: Run tests with JUnit as reporter
           command: yarn jest
