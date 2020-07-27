@@ -28,7 +28,7 @@ jobs:
           name: "JavaScript Linter"
           command: |
             mkdir -p reports/junit
-            yarn eslint ./src/ --format junit --output-file reports/eslint.xml
+            yarn eslint ./src/ --format junit --output-file reports/junit/eslint.xml
 
       - run:
           name: Run tests with JUnit as reporter
