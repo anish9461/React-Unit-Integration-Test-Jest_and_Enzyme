@@ -28,6 +28,7 @@ jobs:
           command: |
             mkdir -p ~/lint-reports
             yarn eslint ./src/ --format junit --output-file ~/lint-reports/eslint.xml
+            ls
       - run:
           name: Run tests with JUnit as reporter
           command: yarn jest
